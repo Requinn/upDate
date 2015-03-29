@@ -30,6 +30,7 @@ public:
 	int getYear();
 	/*converts date to julian int*/
 	int julian() const;
+	int julian(int M, int D, int Y) const;
 	/*converts julian to gregorian*/
 	upDate gregorian(int JD);
 	/*returns the number of dates in the system*/
@@ -54,7 +55,7 @@ public:
 	/*post-decrement overloader*/
 	friend upDate operator--(const upDate &lhs, const int test);
 	/*overloader for the += unary operation*/
-	friend upDate operator+=(const upDate &lhs, const int &rhs);
+	upDate& operator+=(int rhs);
 	/*overloader for the greater than comparison*/
 	friend bool operator>(upDate &lhs, upDate &rhs);
 	/*overloader for the less than comparison*/

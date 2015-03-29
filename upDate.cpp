@@ -15,16 +15,12 @@ static int dateCount;
 		dateCount++;
 	}
 	upDate::upDate(int M, int D, int Y){
-		if (M > 12 || D > 31){
-			upDate();
-		}
-		else{
-			s = new int[3];
-			s[0] = D;
-			s[1] = M;
-			s[2] = Y;
-		}
+		s = new int[3];
+		s[0] = D;
+		s[1] = M;
+		s[2] = Y; 
 		dateCount++;
+		juliand = julian(M, D, Y);
 	}
 	upDate::upDate(const upDate& D){ //copy Constructor
 		s = new int[3];
@@ -32,6 +28,7 @@ static int dateCount;
 			s[i] = D.s[i];
 		}
 		juliand = D.julian();
+
 		dateCount++;
 	}
 	upDate::~upDate(){
@@ -54,6 +51,10 @@ static int dateCount;
 	}
 	int upDate::julian() const{
 		int juliandate = s[0] - 32075 + 1461 * (s[2] + 4800 + (s[1] - 14) / 12) / 4 + 367 * (s[1] - 2 - (s[1] - 14) / 12 * 12) / 12 - 3 * ((s[2] + 4900 + (s[1] - 14) / 12) / 100) / 4;
+		return juliandate;
+	}
+	int upDate::julian(int M, int D, int Y) const{
+		int juliandate = D - 32075 + 1461 * (Y + 4800 + (M - 14) / 12) / 4 + 367 * (M - 2 - (M - 14) / 12 * 12) / 12 - 3 * ((Y + 4900 + (M - 14) / 12) / 100) / 4;
 		return juliandate;
 	}
 	upDate upDate::gregorian(int JD){
@@ -129,11 +130,11 @@ static int dateCount;
 		upDate D(lhs.s[1], newDay, lhs.s[2]);
 		return D;
 	}
-	upDate operator+=(const upDate &lhs, const int &rhs){
-		int temp = lhs.julian();
-		temp += rhs;
-		upDate D;
-		return D.gregorian(temp);
+	upDate& upDate::operator+=(int rhs){
+		int temp = julian() + rhs;
+		upDate E = gregorian(temp); 
+		setDate(E.s[1], E.s[0], E.s[2]);
+		return *this;	//I am not sure what goes wrong here
 	}
 	bool operator>(upDate &lhs, upDate &rhs){
 		return lhs.julian() > rhs.julian();

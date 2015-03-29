@@ -13,7 +13,6 @@ int _tmain(int argc, _TCHAR* argv[])
 	upDate D5 = D2 - 4;
 
 	int x = D5 - D4; // how many days between D5 and D4. Can be negative or positive
-	cout << D1 <<endl<< D2 <<endl<< D3 <<endl<< D4 <<endl<< D5 << endl;
 	cout << "UpDate Testing - if no error message is displayed, The test is passed" << endl;
 
 	if (D1 == D2) {}

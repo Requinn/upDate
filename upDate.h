@@ -9,16 +9,15 @@ using namespace std;
 
 class upDate{
 private:
-	int day, month, year;
+	int day, month, year, juliand;
 	int* s;
-	
 public:
 	/*Default constructor*/
 	upDate(); 
 	/*overloaded consturctor*/
 	upDate(int M, int D, int Y);
 	/*copy constructor*/
-	upDate operator+(const upDate& D);
+	upDate(const upDate& D);
 	/*deleter function*/
 	~upDate();
 	/*date setter*/
@@ -31,6 +30,8 @@ public:
 	int getYear();
 	/*converts date to julian int*/
 	int julian() const;
+	/*converts julian to gregorian*/
+	upDate gregorian(int JD);
 	/*returns the number of dates in the system*/
 	static int GetDateCount();
 	/*returns the name of the month*/
@@ -53,7 +54,7 @@ public:
 	/*post-decrement overloader*/
 	friend upDate operator--(const upDate &lhs, const int test);
 	/*overloader for the += unary operation*/
-	friend int operator+=(const upDate &lhs, const int &rhs);
+	friend upDate operator+=(const upDate &lhs, const int &rhs);
 	/*overloader for the greater than comparison*/
 	friend bool operator>(upDate &lhs, upDate &rhs);
 	/*overloader for the less than comparison*/

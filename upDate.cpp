@@ -15,23 +15,28 @@ static int dateCount;
 		dateCount++;
 	}
 	upDate::upDate(int M, int D, int Y){
-		s = new int[3];
-		s[0] = D;
-		s[1] = M;
-		s[2] = Y;
+		if (M > 12 || D > 31){
+			upDate();
+		}
+		else{
+			s = new int[3];
+			s[0] = D;
+			s[1] = M;
+			s[2] = Y;
+		}
 		dateCount++;
 	}
-	upDate upDate::operator+(const upDate& D){ //copy Constructor
-		D.s[0]= this->s[0] + D.s[0];
-		D.s[1] = this->s[1] + D.s[1];
-		D.s[2] = this->s[2] + D.s[2];
+	upDate::upDate(const upDate& D){ //copy Constructor
+		s = new int[3];
+		for (int i = 0; i < 3; i++){
+			s[i] = D.s[i];
+		}
+		juliand = D.julian();
 		dateCount++;
-		return D;
 	}
 	upDate::~upDate(){
 		delete[] s;
 		dateCount--;
-		cout << "Date deleted!" << endl;
 	}
 	void upDate::setDate(int M, int D, int Y){
 		s[0] = D;
@@ -48,8 +53,26 @@ static int dateCount;
 		return s[2];
 	}
 	int upDate::julian() const{
-		int juliandate = day - 32075 + 1461 * (year + 4800 + (month - 14) / 12) / 4 + 367 * (month - 2 - (month - 14) / 12 * 12) / 12 - 3 * ((year + 4900 + (month - 14) / 12) / 100) / 4;
+		int juliandate = s[0] - 32075 + 1461 * (s[2] + 4800 + (s[1] - 14) / 12) / 4 + 367 * (s[1] - 2 - (s[1] - 14) / 12 * 12) / 12 - 3 * ((s[2] + 4900 + (s[1] - 14) / 12) / 100) / 4;
 		return juliandate;
+	}
+	upDate upDate::gregorian(int JD){
+		int L, N, K, J, I;
+		L = JD + 68569;
+		N = 4 * L / 146097;
+		L = L - (146097 * N + 3) / 4;
+		I = 4000 * (L + 1) / 1461001;
+		L = L - 1461 * I / 4 + 31;
+		J = 80 * L / 2447;
+		K = L - 2447 * J / 80;
+		L = J / 11;
+		J = J + 2 - 12 * L;
+		I = 100 * (N - 49) + I + L;
+		upDate D(J, K, I);
+		return D;
+		//s[0] = K;
+		//s[1] = J;
+		//s[2] = I;
 	}
 	int upDate::GetDateCount(){
 		return dateCount;
@@ -91,23 +114,26 @@ static int dateCount;
 	upDate operator--(const upDate &lhs){
 		int current = lhs.s[0];
 		int	newDay = current--;
-		upDate D(lhs.s[0], newDay, lhs.s[2]);
+		upDate D(lhs.s[1], newDay, lhs.s[2]);
 		return D;
 	}
 	upDate operator++(const upDate &lhs, const int test){
 		int current = lhs.s[0];
 		int newDay = current++;
-		upDate D(lhs.s[0], newDay, lhs.s[2]);
+		upDate D(lhs.s[1], newDay, lhs.s[2]);
 		return D;
 	}
 	upDate operator--(const upDate &lhs, const int test){
 		int current = lhs.s[0];
 		int	newDay = current--;
-		upDate D(lhs.s[0], newDay, lhs.s[2]);
+		upDate D(lhs.s[1], newDay, lhs.s[2]);
 		return D;
 	}
-	int operator+=(const upDate &lhs, const int &rhs){
-		return lhs.julian() + rhs;
+	upDate operator+=(const upDate &lhs, const int &rhs){
+		int temp = lhs.julian();
+		temp += rhs;
+		upDate D;
+		return D.gregorian(temp);
 	}
 	bool operator>(upDate &lhs, upDate &rhs){
 		return lhs.julian() > rhs.julian();
